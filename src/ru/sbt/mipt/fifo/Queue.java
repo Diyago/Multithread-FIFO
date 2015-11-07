@@ -34,7 +34,7 @@ public interface Queue<Object> {
      * @throws Exception if fails
 	 */
 
-    int length();
+    int getLength();
      /*
      * Return the length of Queue
      *

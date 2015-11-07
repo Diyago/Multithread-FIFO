@@ -3,30 +3,66 @@ package ru.sbt.mipt.fifo;
 /**
  * Created by Insaf on 07.11.2015.
  */
-public class FIFO implements  Queue{
+public class FIFO implements Queue {
+    private Node frontQueue, endQueue; //begin and end nodes
+    private int length; // size
+
+    private class Node {
+        Object e;
+        Node next;
+    }
+
+    public FIFO() {
+        frontQueue = null;
+        endQueue = null;
+        length = 0;
+    }
 
     @Override
     public boolean add(Object e) {
-        return false;
+        Node PrevEnd = endQueue;
+
+        endQueue = new Node();
+        endQueue.e = e;
+        endQueue.next = null;
+
+        if (isEmpty()) {
+            frontQueue = endQueue;
+        } else {
+            PrevEnd.next = endQueue;
+        }
+        length++;
+
+        return true;
     }
 
     @Override
     public Object poll() {
-        return null;
+        Object item = frontQueue.e;
+        frontQueue = frontQueue.next;
+
+        if (isEmpty()) {
+            endQueue = null;
+        }
+        length--;
+        return item;
     }
 
     @Override
     public Object element() {
-        return null;
+        if (frontQueue != null)
+            return frontQueue.e;
+        else
+            return null;
     }
 
     @Override
-    public int length() {
-        return 0;
+    public int getLength() {
+        return length;
     }
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return (length == 0);
     }
 }
