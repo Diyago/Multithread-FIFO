@@ -1,4 +1,4 @@
-# Multithread-FIFO
+# Multithread-ru.sbt.mipt.fifo
 
 
 Using GitHub Integration on your IDEA
