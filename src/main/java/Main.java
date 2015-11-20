@@ -12,6 +12,7 @@ public class Main {
         //Should anything go wrong an exception will be thrown.
         fifo.add("item1");
         fifo.add("item2");
+        fifo.add("item3");
 
 
         //Removing the first item from the queue.
@@ -26,6 +27,9 @@ public class Main {
         //Checking what item is first in line without removing it
         //If the queue is empty a null value will be returned.
         System.out.println("peek: " + fifo.element());
+
+        System.out.println("poll: " + fifo.poll());
+        System.out.println("poll: " + fifo.poll());
 
         return;
     }

@@ -38,12 +38,12 @@ public class FIFO implements Queue {
 
     @Override
     public Object poll() {
+        if (isEmpty())
+            return null;
+
         Object item = frontQueue.e;
         frontQueue = frontQueue.next;
 
-        if (isEmpty()) {
-            endQueue = null;
-        }
         length--;
         return item;
     }
