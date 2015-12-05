@@ -1,5 +1,6 @@
 package ru.sbt.mipt.fifo;
 
+
 import java.util.AbstractQueue;
 import java.util.Collection;
 import java.util.Iterator;

@@ -1,5 +1,6 @@
 package ru.sbt.mipt.fifo;
 
+
 /**
  * Created by Insaf on 07.11.2015.
  */
