@@ -22,12 +22,13 @@ public abstract class ProduceWorker<T> extends Thread implements Producer<T> {
         while (!isInterrupted()) {
             T value = produce();
             queue.offer(value);
-            if (waitTime > 0)
+            if (waitTime > 0) {
                 try {
                     Thread.sleep(waitTime);
                 } catch (InterruptedException e) {
                     return;
                 }
+            }
         }
     }
 }
