@@ -1,4 +1,4 @@
-import ru.sbt.mipt.fifo.FIFO;
+import ru.sbt.mipt.fifo.SingeThreadQueue;
 
 /**
  * Created by Insaf on 07.11.2015.
@@ -6,30 +6,30 @@ import ru.sbt.mipt.fifo.FIFO;
 public class Main {
     public static void main(String[] args) {
 
-        FIFO fifo = new FIFO();
+        SingeThreadQueue singeThreadQueue = new SingeThreadQueue();
 
         //Using the add method to add items.
         //Should anything go wrong an exception will be thrown.
-        fifo.add("item1");
-        fifo.add("item2");
-        fifo.add("item3");
+        singeThreadQueue.add("item1");
+        singeThreadQueue.add("item2");
+        singeThreadQueue.add("item3");
 
 
         //Removing the first item from the queue.
-        System.out.println("remove: " + fifo.poll());
+        System.out.println("remove: " + singeThreadQueue.poll());
 
         //Checking what item is first in line without removing it
-        System.out.println("element: " + fifo.element());
+        System.out.println("element: " + singeThreadQueue.element());
 
         //Removing the first item from the queue.
-        System.out.println("poll: " + fifo.poll());
+        System.out.println("poll: " + singeThreadQueue.poll());
 
         //Checking what item is first in line without removing it
         //If the queue is empty a null value will be returned.
-        System.out.println("peek: " + fifo.element());
+        System.out.println("peek: " + singeThreadQueue.element());
 
-        System.out.println("poll: " + fifo.poll());
-        System.out.println("poll: " + fifo.poll());
+        System.out.println("poll: " + singeThreadQueue.poll());
+        System.out.println("poll: " + singeThreadQueue.poll());
 
         return;
     }
