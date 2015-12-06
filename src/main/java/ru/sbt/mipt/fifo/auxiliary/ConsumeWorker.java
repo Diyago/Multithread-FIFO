@@ -1,11 +1,9 @@
-package ru.sbt.mipt.fifo;
-
-import java.util.*;
+package ru.sbt.mipt.fifo.auxiliary;
 
 /**
  * Created by Илья on 03.12.2015.
  */
-public abstract class ConsumeWorker <T> extends Thread implements Consumer<T>{
+public abstract class ConsumeWorker<T> extends Thread implements Consumer<T> {
     private java.util.Queue<T> queue;
 
     public ConsumeWorker(java.util.Queue<T> queue) {
@@ -23,6 +21,7 @@ public abstract class ConsumeWorker <T> extends Thread implements Consumer<T>{
     }
 
     private volatile Object result;
+
     public Object getResult() {
         return result;
     }

@@ -1,12 +1,11 @@
-package ru.sbt.mipt.fifo;
+package ru.sbt.mipt.fifo.auxiliary;
 
-import java.util.*;
 import java.util.Queue;
 
 /**
  * Created by Ilya on 03.12.2015.
  */
-public abstract class ProduceWorker<T> extends Thread implements Producer<T>{
+public abstract class ProduceWorker<T> extends Thread implements Producer<T> {
 
     private Queue<T> queue;
     private long waitTime = 0;
@@ -23,7 +22,7 @@ public abstract class ProduceWorker<T> extends Thread implements Producer<T>{
         while (!isInterrupted()) {
             T value = produce();
             queue.offer(value);
-            if (waitTime>0)
+            if (waitTime > 0)
                 try {
                     Thread.sleep(waitTime);
                 } catch (InterruptedException e) {

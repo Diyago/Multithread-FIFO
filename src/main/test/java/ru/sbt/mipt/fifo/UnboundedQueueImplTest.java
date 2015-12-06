@@ -1,8 +1,8 @@
-
+package ru.sbt.mipt.fifo;
 
 import org.junit.Test;
-import ru.sbt.mipt.fifo.ConsumeWorker;
-import ru.sbt.mipt.fifo.ProduceWorker;
+import ru.sbt.mipt.fifo.auxiliary.ConsumeWorker;
+import ru.sbt.mipt.fifo.auxiliary.ProduceWorker;
 import ru.sbt.mipt.fifo.UnboundedQueueImpl;
 
 import static org.junit.Assert.*;
@@ -15,6 +15,7 @@ public class UnboundedQueueImplTest {
 
         ProduceWorker<Integer> produceWorker = new ProduceWorker<Integer>(q, 10) {
             int count = 1000;
+
             @Override
             public Integer produce() {
                 if (count == 0)
@@ -27,6 +28,7 @@ public class UnboundedQueueImplTest {
         ConsumeWorker<Integer> consumeWorker = new ConsumeWorker<Integer>(q) {
             Integer last = null;
             volatile boolean isOk = true;
+
             @Override
             public void consume(Integer value) {
                 if (value == null) {
@@ -47,6 +49,7 @@ public class UnboundedQueueImplTest {
                     }
                 }
             }
+
             public Object getResult() {
                 return new Boolean(isOk);
             }

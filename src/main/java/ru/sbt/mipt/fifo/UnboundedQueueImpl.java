@@ -17,24 +17,28 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
     private AtomicReference<Node<T>> tail = new AtomicReference<Node<T>>(sentinel);
 
     public UnboundedQueueImpl() {
-        
+
     }
-    
+
     private static class Node<T> {
         T value;
         AtomicReference<Node<T>> next;
+
         Node() {
             value = null;
             next = new AtomicReference<Node<T>>(null);
         }
+
         Node(T v) {
             value = v;
             next = new AtomicReference<Node<T>>(null);
         }
+
         Node(Node<T> n) {
             value = null;
             next = new AtomicReference<Node<T>>(n);
         }
+
         Node(T v, Node<T> n) {
             value = v;
             next = new AtomicReference<Node<T>>(n);
@@ -47,7 +51,7 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
     public int size() {
         Node<T> node = sentinel.next.get();
         int count = 0;
-        while (node!=null) {
+        while (node != null) {
             count++;
             node = node.next.get();
         }
@@ -93,10 +97,10 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
             final Node<T> localTail = tail.get();
             Node<T> realTail = localTail;
 
-            while (realTail.next.get()!=null)
+            while (realTail.next.get() != null)
                 realTail = realTail.next.get();
 
-            if (realTail.next.compareAndSet(null,newNode)) {
+            if (realTail.next.compareAndSet(null, newNode)) {
                 tail.compareAndSet(localTail, newNode);       //ignore fails
                 return true;
             }
