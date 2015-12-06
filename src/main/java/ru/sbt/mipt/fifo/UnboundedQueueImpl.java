@@ -43,6 +43,7 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
 
 
     @Override
+    // return size of Queue (numbers of Nodes)
     public int size() {
         Node<T> node = sentinel.next.get();
         int count = 0;
@@ -70,6 +71,7 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
 
     @Override
     public T poll(long timeout, TimeUnit unit) throws InterruptedException {
+        // TODO: 06.12.2015
         throw new UnsupportedOperationException();
     }
 
@@ -79,6 +81,12 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
     }
 
     @Override
+    /**
+     * Inserts the specified element into this queue, waiting if necessary
+     * for space to become available.
+     *
+     * @param e the element to add
+     */
     public boolean offer(T t) {
         Node<T> newNode = new Node<T>(t);
         while (true) {

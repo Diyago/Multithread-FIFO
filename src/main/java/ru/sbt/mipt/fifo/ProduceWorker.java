@@ -13,7 +13,7 @@ public abstract class ProduceWorker<T> extends Thread implements Producer<T>{
 
     public ProduceWorker(Queue<T> queue, long idleTime) {
         this.queue = queue;
-        this.waitTime = idleTime;
+        this.waitTime = idleTime; // waiting time with no action
         start();
     }
 
