@@ -2,7 +2,7 @@ package ru.sbt.mipt.fifo;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+    import static org.junit.Assert.*;
 
 /**
  * Created by Insaf on 06.12.2015.
