@@ -17,6 +17,7 @@ public class WaitFreeQueue {
 
     /**
      * конструктор
+     *
      * @param numberOfThreads
      */
     public WaitFreeQueue(int numberOfThreads) {
@@ -33,12 +34,12 @@ public class WaitFreeQueue {
 
     //The Node class is to hold elements of the queues with atomic reference to the next element
     class Node {
-        int value;
+        double value;
         AtomicReference<Node> next;
         int enqTid;
         AtomicInteger deqTid;
 
-        Node(int val, int etid) {
+        Node(double val, int etid) {
             value = val;
             next = new AtomicReference<Node>(null);
 
@@ -65,8 +66,8 @@ public class WaitFreeQueue {
 
     /// enqueue operations:
 
-    void enq(int value) {
-        if (TID.get()==null) {
+    public void enq(double value) {
+        if (TID.get() == null) {
             TID.set(threadsCount.getAndIncrement());
         }
         long phase = maxPhase() + 1;
@@ -112,8 +113,8 @@ public class WaitFreeQueue {
 
     ///  deenqueue functions
 
-    int deq() throws IllegalStateException {
-        if (TID.get()==null) {
+    public double deq() throws IllegalStateException {
+        if (TID.get() == null) {
             TID.set(threadsCount.getAndIncrement());
         }
         long phase = maxPhase() + 1;
