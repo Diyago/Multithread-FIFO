@@ -11,12 +11,25 @@ public class WaitFreeQueue {
 
     AtomicReference<Node> head, tail;
     AtomicReferenceArray<OpDesc> state;
-    Integer NUM_THRDS;
+    private final int NUM_THRDS;
+    private ThreadLocal<Integer> TID = new ThreadLocal<>();
+    private AtomicInteger threadsCount = new AtomicInteger(0);
 
-    public WaitFreeQueue(Integer NUM_THRDS) {
-        // // TODO: 20.12.2015 constructor to be updated
-        this.NUM_THRDS = NUM_THRDS;
+    /**
+     * конструктор
+     * @param numberOfThreads
+     */
+    public WaitFreeQueue(int numberOfThreads) {
+        NUM_THRDS = numberOfThreads;
+        Node sentinel = new Node(-1, -1);
+        head = new AtomicReference<Node>(sentinel);
+        tail = new AtomicReference<Node>(sentinel);
+        state = new AtomicReferenceArray<OpDesc>(NUM_THRDS);
+        for (int i = 0; i < state.length(); i++) {
+            state.set(i, new OpDesc(-1, false, true, null));
+        }
     }
+
 
     //The Node class is to hold elements of the queues with atomic reference to the next element
     class Node {
@@ -53,8 +66,11 @@ public class WaitFreeQueue {
     /// enqueue operations:
 
     void enq(int value) {
+        if (TID.get()==null) {
+            TID.set(threadsCount.getAndIncrement());
+        }
         long phase = maxPhase() + 1;
-        state.set(TID, new OpDesc(phase, true, true, new Node(value, TID)));
+        state.set(TID.get(), new OpDesc(phase, true, true, new Node(value, TID.get())));
         help(phase);
         helpFinishEnq();
     }
@@ -97,11 +113,14 @@ public class WaitFreeQueue {
     ///  deenqueue functions
 
     int deq() throws IllegalStateException {
+        if (TID.get()==null) {
+            TID.set(threadsCount.getAndIncrement());
+        }
         long phase = maxPhase() + 1;
-        state.set(TID, new OpDesc(phase, true, false, null));
+        state.set(TID.get(), new OpDesc(phase, true, false, null));
         help(phase);
         helpFinishDeq();
-        Node node = state.get(TID).node;
+        Node node = state.get(TID.get()).node;
         if (node == null) {
             throw new IllegalStateException();
         }
@@ -165,15 +184,6 @@ public class WaitFreeQueue {
         return state.get(tid).pending && state.get(tid).phase <= ph;
     }
 
-    void WFQueue() {
-        Node sentinel = new Node(-1, -1);
-        head = new AtomicReference<Node>(sentinel);
-        tail = new AtomicReference<Node>(sentinel);
-        state = new AtomicReferenceArray<OpDesc>(NUM_THRDS);
-        for (int i = 0; i < state.length(); i++) {
-            state.set(i, new OpDesc(-1, false, true, null));
-        }
-    }
 
     void help(long phase) {
         for (int i = 0; i < state.length(); i++) {
