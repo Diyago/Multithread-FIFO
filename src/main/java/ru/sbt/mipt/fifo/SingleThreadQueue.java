@@ -3,7 +3,7 @@ package ru.sbt.mipt.fifo;
 /**
  * Created by Insaf on 07.11.2015.
  */
-public class SingeThreadQueue implements Queue {
+public class SingleThreadQueue implements Queue {
     private Node frontQueue, endQueue; //begin and end nodes
     private int length; // size
 
@@ -12,7 +12,7 @@ public class SingeThreadQueue implements Queue {
         Node next;
     }
 
-    public SingeThreadQueue() {
+    public SingleThreadQueue() {
         frontQueue = null;
         endQueue = null;
         length = 0;

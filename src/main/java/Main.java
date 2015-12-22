@@ -1,4 +1,4 @@
-import ru.sbt.mipt.fifo.SingeThreadQueue;
+import ru.sbt.mipt.fifo.SingleThreadQueue;
 import ru.sbt.mipt.fifo.UnboundedQueueImpl;
 
 import java.util.ArrayList;
@@ -13,39 +13,39 @@ public class Main {
         int numberOfAdds = 1000000;
         //####    TEST SINGLE THREAD QUERY    ####\\\
 
-        SingeThreadQueue singeThreadQueue = new SingeThreadQueue();
+        SingleThreadQueue singleThreadQueue = new SingleThreadQueue();
 
         // measuring adding time
         long startTime = System.nanoTime();
 
         for (int i = 0; i < numberOfAdds; i++) {
-            singeThreadQueue.add(5555555.55);
+            singleThreadQueue.add(5555555.55);
         }
         System.out.println("SINGLE THREAD QUERY adding time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
         // measuring polling time
         startTime = System.nanoTime();
         for (int i = 0; i < numberOfAdds; i++) {
-            singeThreadQueue.poll();
+            singleThreadQueue.poll();
         }
 
         System.out.println("SINGLE THREAD QUERY polling time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
         // checking under pressure
-        singeThreadQueue = new SingeThreadQueue();
+        singleThreadQueue = new SingleThreadQueue();
 
         // measuring adding time
         startTime = System.nanoTime();
 
         for (int i = 0; i < numberOfAdds; i++) {
-            singeThreadQueue.add(heaveCalcFunc(5555555.55));
+            singleThreadQueue.add(heaveCalcFunc(5555555.55));
         }
         System.out.println("SINGLE THREAD QUERY adding time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
         // measuring polling time
         startTime = System.nanoTime();
         for (int i = 0; i < numberOfAdds; i++) {
-            singeThreadQueue.poll();
+            singleThreadQueue.poll();
         }
         System.out.println("SINGLE THREAD QUERY polling time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
