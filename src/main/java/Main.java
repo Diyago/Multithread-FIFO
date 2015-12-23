@@ -4,6 +4,7 @@ import ru.sbt.mipt.fifo.WaitFreeQueue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Created by Insaf on 07.11.2015.
@@ -11,10 +12,10 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
-        int numberOfThread = 32;
         int numberOfAdds = 100_000;
 
         while (numberOfAdds < 100_000_000) {
+            int numberOfThread = 32;
             System.out.println("The number of elements, that will be addded: " + numberOfAdds);
             //####    TEST SINGLE THREAD QUERY    ####\\\
 
@@ -239,7 +240,96 @@ public class Main {
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
 
-                numberOfThread = numberOfThread*2;
+                //####    TEST MULTI THREAD ConcurrentLinkedQueue    ####\\\
+
+                ConcurrentLinkedQueue<Double> concurrentLinkedQueue = new ConcurrentLinkedQueue<Double>();
+                threads = new ArrayList<Thread>();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            concurrentLinkedQueue.add(5555555.55);
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") concurrent Linked Queue adding time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
+                threads.clear();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            concurrentLinkedQueue.poll();
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") concurrent Linked Queue polling time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
+
+                // under pressure
+                ConcurrentLinkedQueue<Double> concurrentLinkedQueueP = new ConcurrentLinkedQueue<Double>();
+
+
+                threads.clear();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            concurrentLinkedQueueP.add(heaveCalcFunc(5555555.55));
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") concurrent Linked Queue adding time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                threads.clear();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            concurrentLinkedQueueP.poll();
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") concurrent Linked Queue polling time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
+
+                numberOfThread = numberOfThread * 2;
             }
             System.out.println("\n");
             numberOfAdds = numberOfAdds * 10;
