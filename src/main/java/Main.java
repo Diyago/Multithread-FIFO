@@ -3,6 +3,7 @@ import ru.sbt.mipt.fifo.UnboundedQueueImpl;
 import ru.sbt.mipt.fifo.WaitFreeQueue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -15,7 +16,7 @@ public class Main {
         int numberOfAdds = 100_000;
 
         while (numberOfAdds < 100_000_000) {
-            int numberOfThread = 32;
+            int numberOfThread = 2;
             System.out.println("The number of elements, that will be addded: " + numberOfAdds);
             //####    TEST SINGLE THREAD QUERY    ####\\\
 
@@ -327,6 +328,94 @@ public class Main {
                     thread.join();
                 }
                 System.out.println("MULTI THREAD (" + numberOfThread + ") concurrent Linked Queue polling time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
+
+                //####    TEST MULTI THREAD SynchronizedCollection    ####\\\
+                Collections.synchronizedCollection(Collections.checkedQueue())<Double> synchronizedQueue =
+                        new Collections.synchronizedCollection(Collections.checkedQueue()) <Double>();
+
+                threads = new ArrayList<Thread>();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            synchronizedQueue.add(5555555.55);
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") Synchronized Queue adding time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
+                threads.clear();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            synchronizedQueue.poll();
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") Synchronized Queue polling time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
+
+                // under pressure
+
+                threads.clear();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            synchronizedQueue.add(heaveCalcFunc(5555555.55));
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") Synchronized Queue adding time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                threads.clear();
+                startTime = System.nanoTime();
+
+                for (int i = 0; i < numberOfThread; i++) {
+                    Thread addingThread;
+                    addingThread = new Thread(() -> {
+                        for (int j = 0; j < targetNumber; j++) {
+                            synchronizedQueue.poll();
+                        }
+                    });
+                    threads.add(addingThread);
+                }
+
+                threads.forEach(Thread::start);
+
+                for (Thread thread : threads) {
+                    thread.join();
+                }
+                System.out.println("MULTI THREAD (" + numberOfThread + ") Synchronized Queue polling time under pressure: "
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
                 numberOfThread = numberOfThread * 2;
