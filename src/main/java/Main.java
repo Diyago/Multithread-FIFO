@@ -5,7 +5,11 @@ import ru.sbt.mipt.fifo.WaitFreeQueue;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+
+import static java.util.Collections.checkedQueue;
+import static java.util.Collections.synchronizedCollection;
 
 /**
  * Created by Insaf on 07.11.2015.
@@ -331,8 +335,7 @@ public class Main {
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
                 //####    TEST MULTI THREAD SynchronizedCollection    ####\\\
-                Collections.synchronizedCollection(Collections.checkedQueue())<Double> synchronizedQueue =
-                        new Collections.synchronizedCollection(Collections.checkedQueue()) <Double>();
+                Collections synchronizedQueue = synchronizedCollection(new Queue <Double>);
 
                 threads = new ArrayList<Thread>();
                 startTime = System.nanoTime();
