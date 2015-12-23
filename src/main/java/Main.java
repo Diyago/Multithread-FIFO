@@ -11,8 +11,11 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
+        int numberOfThread = 32;
         int numberOfAdds = 100_000;
-        while (numberOfAdds < 100_000_0) {
+
+        while (numberOfAdds < 100_000_000) {
+            System.out.println("The number of elements, that will be addded: " + numberOfAdds);
             //####    TEST SINGLE THREAD QUERY    ####\\\
 
             SingleThreadQueue singleThreadQueue = new SingleThreadQueue();
@@ -42,21 +45,21 @@ public class Main {
             for (int i = 0; i < numberOfAdds; i++) {
                 singleThreadQueue.add(heaveCalcFunc(5555555.55));
             }
-            System.out.println("SINGLE THREAD QUERY adding time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+            System.out.println("SINGLE THREAD QUERY adding time under pressure: " + (System.nanoTime() - startTime)
+                    / Math.pow(10, 9));
 
             // measuring polling time
             startTime = System.nanoTime();
             for (int i = 0; i < numberOfAdds; i++) {
                 singleThreadQueue.poll();
             }
-            System.out.println("SINGLE THREAD QUERY polling time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+            System.out.println("SINGLE THREAD QUERY polling time under pressure: " + (System.nanoTime() - startTime)
+                    / Math.pow(10, 9));
 
-
-            int numberOfThread = 2;
             int targetNumber = numberOfAdds / numberOfThread;
 
             //####    TEST MULTI THREAD UNBOUNDED QUERY    ####\\\
-            while (numberOfThread < 3) {
+            while (numberOfThread < 33) {
                 java.util.Queue<Double> queue = new UnboundedQueueImpl<Double>();
 
 
@@ -78,7 +81,8 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") unbounded QUERY adding time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ") unbounded QUERY adding time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
 
@@ -97,7 +101,8 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY polling time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY polling time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
 
                 // under pressure
 
@@ -119,7 +124,8 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY adding time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY adding time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
 
@@ -138,11 +144,14 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY polling time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY polling time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
 
                 //####    TEST MULTI THREAD WAIT-FREE QUERY    ####\\\
-                WaitFreeQueue waitFreeQueue = new WaitFreeQueue(numberOfThread);
+
+                //x2 because to enq and to deq will used different threads
+                WaitFreeQueue waitFreeQueue = new WaitFreeQueue(numberOfThread * 2);
                 threads = new ArrayList<Thread>();
                 startTime = System.nanoTime();
 
@@ -161,7 +170,8 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY adding time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY adding time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
 
@@ -180,9 +190,12 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY polling time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY polling time: " +
+                        (System.nanoTime() - startTime) / Math.pow(10, 9));
 
                 // under pressure
+                WaitFreeQueue waitFreeQueueP = new WaitFreeQueue(numberOfThread * 2);
+
 
                 threads.clear();
                 startTime = System.nanoTime();
@@ -191,7 +204,7 @@ public class Main {
                     Thread addingThread;
                     addingThread = new Thread(() -> {
                         for (int j = 0; j < targetNumber; j++) {
-                            waitFreeQueue.enq(heaveCalcFunc(5555555.55));
+                            waitFreeQueueP.enq(heaveCalcFunc(5555555.55));
                         }
                     });
                     threads.add(addingThread);
@@ -202,7 +215,8 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  QUERY adding time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  QUERY adding time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
 
@@ -210,7 +224,7 @@ public class Main {
                     Thread addingThread;
                     addingThread = new Thread(() -> {
                         for (int j = 0; j < targetNumber; j++) {
-                            waitFreeQueue.deq();
+                            waitFreeQueueP.deq();
                         }
                     });
                     threads.add(addingThread);
@@ -221,14 +235,16 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  QUERY polling time under pressure: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  QUERY polling time under pressure: "
+                        + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
 
-                numberOfThread++;
+                numberOfThread = numberOfThread*2;
             }
+            System.out.println("\n");
             numberOfAdds = numberOfAdds * 10;
         }
-        return;
+
 
     }
 

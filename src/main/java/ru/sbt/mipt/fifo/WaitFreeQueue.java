@@ -15,6 +15,7 @@ public class WaitFreeQueue {
     private ThreadLocal<Integer> TID = new ThreadLocal<>();
     private AtomicInteger threadsCount = new AtomicInteger(0);
 
+
     /**
      * конструктор
      *
@@ -94,6 +95,10 @@ public class WaitFreeQueue {
                 }
             }
         }
+    }
+
+    public int getNUM_THRDS() {
+        return NUM_THRDS;
     }
 
     void helpFinishEnq() {

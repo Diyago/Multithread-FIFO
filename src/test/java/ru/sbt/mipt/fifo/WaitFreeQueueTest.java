@@ -49,10 +49,10 @@ public class WaitFreeQueueTest {
     @Test
     public void checkEnqDeg() throws Exception {
         int numberOfThread = 2;
-        int numberOfAdds = 100_000;
+        int numberOfAdds = 100;
         int targetNumber = numberOfAdds / numberOfThread;
 
-        WaitFreeQueue waitFreeQueue = new WaitFreeQueue(numberOfThread);
+        WaitFreeQueue waitFreeQueue = new WaitFreeQueue(numberOfThread*2);
         List<Thread> threads = new ArrayList<Thread>();
         long startTime = System.nanoTime();
 
@@ -60,7 +60,7 @@ public class WaitFreeQueueTest {
             Thread addingThread;
             addingThread = new Thread(() -> {
                 for (int j = 0; j < targetNumber; j++) {
-                    waitFreeQueue.enq(5555555.55);
+                    waitFreeQueue.enq(5.5);
                 }
             });
             threads.add(addingThread);
@@ -71,7 +71,6 @@ public class WaitFreeQueueTest {
         for (Thread thread : threads) {
             thread.join();
         }
-        System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY adding time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
         threads.clear();
         startTime = System.nanoTime();
 
@@ -90,8 +89,7 @@ public class WaitFreeQueueTest {
         for (Thread thread : threads) {
             thread.join();
         }
-        System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY polling time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
-
+        Assert.assertEquals(4, waitFreeQueue.getNUM_THRDS());
     }
 
     private class SomeEnq implements Runnable {
