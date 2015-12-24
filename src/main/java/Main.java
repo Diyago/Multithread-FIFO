@@ -32,7 +32,7 @@ public class Main {
             for (int i = 0; i < numberOfAdds; i++) {
                 singleThreadQueue.add(5555555.55);
             }
-            System.out.println("SINGLE THREAD QUERY adding time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+            System.out.println("SINGLE THREAD queue adding time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
             // measuring polling time
             startTime = System.nanoTime();
@@ -40,7 +40,7 @@ public class Main {
                 singleThreadQueue.poll();
             }
 
-            System.out.println("SINGLE THREAD QUERY polling time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
+            System.out.println("SINGLE THREAD queue polling time: " + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
             // checking under pressure
             singleThreadQueue = new SingleThreadQueue();
@@ -51,7 +51,7 @@ public class Main {
             for (int i = 0; i < numberOfAdds; i++) {
                 singleThreadQueue.add(heaveCalcFunc(5555555.55));
             }
-            System.out.println("SINGLE THREAD QUERY adding time under pressure: " + (System.nanoTime() - startTime)
+            System.out.println("SINGLE THREAD queue adding time under pressure: " + (System.nanoTime() - startTime)
                     / Math.pow(10, 9));
 
             // measuring polling time
@@ -59,7 +59,7 @@ public class Main {
             for (int i = 0; i < numberOfAdds; i++) {
                 singleThreadQueue.poll();
             }
-            System.out.println("SINGLE THREAD QUERY polling time under pressure: " + (System.nanoTime() - startTime)
+            System.out.println("SINGLE THREAD queue polling time under pressure: " + (System.nanoTime() - startTime)
                     / Math.pow(10, 9));
 
             int targetNumber = numberOfAdds / numberOfThread;
@@ -87,7 +87,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") unbounded QUERY adding time: " +
+                System.out.println("MULTI THREAD (" + numberOfThread + ") unbounded queue adding time: " +
                         (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
@@ -107,7 +107,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY polling time: " +
+                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded queue polling time: " +
                         (System.nanoTime() - startTime) / Math.pow(10, 9));
 
                 // under pressure
@@ -130,7 +130,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY adding time under pressure: "
+                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded queue adding time under pressure: "
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
@@ -150,7 +150,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded QUERY polling time under pressure: "
+                System.out.println("MULTI THREAD (" + numberOfThread + ")unbounded queue polling time under pressure: "
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
 
@@ -176,7 +176,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY adding time: " +
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE queue adding time: " +
                         (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
@@ -196,7 +196,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE QUERY polling time: " +
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE queue polling time: " +
                         (System.nanoTime() - startTime) / Math.pow(10, 9));
 
                 // under pressure
@@ -221,7 +221,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  QUERY adding time under pressure: "
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  queue adding time under pressure: "
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
                 threads.clear();
                 startTime = System.nanoTime();
@@ -241,7 +241,7 @@ public class Main {
                 for (Thread thread : threads) {
                     thread.join();
                 }
-                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  QUERY polling time under pressure: "
+                System.out.println("MULTI THREAD (" + numberOfThread + ") WAIT-FREE  queue polling time under pressure: "
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
 
 
@@ -333,7 +333,6 @@ public class Main {
                 }
                 System.out.println("MULTI THREAD (" + numberOfThread + ") concurrent Linked Queue polling time under pressure: "
                         + (System.nanoTime() - startTime) / Math.pow(10, 9));
-
 
 
                 numberOfThread = numberOfThread * 2;
