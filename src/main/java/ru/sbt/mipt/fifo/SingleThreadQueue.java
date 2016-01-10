@@ -19,7 +19,7 @@ public class SingleThreadQueue implements Queue {
     }
 
     @Override
-    public boolean add(Object e) {
+    public synchronized boolean add(Object e) {
         Node PrevEnd = endQueue;
 
         endQueue = new Node();
@@ -37,7 +37,7 @@ public class SingleThreadQueue implements Queue {
     }
 
     @Override
-    public Object poll() {
+    public synchronized Object poll() {
         if (isEmpty())
             return null;
 

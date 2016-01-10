@@ -71,4 +71,5 @@ public class SingleThreadQueueTest {
         assertEquals(singleThreadQueue.isEmpty(), false);
 
     }
+
 }

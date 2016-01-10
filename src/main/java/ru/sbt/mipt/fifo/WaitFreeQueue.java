@@ -118,7 +118,7 @@ public class WaitFreeQueue {
 
     ///  deenqueue functions
 
-    public double deq() throws IllegalStateException {
+    public Double deq() {
         if (TID.get() == null) {
             TID.set(threadsCount.getAndIncrement());
         }
@@ -128,7 +128,7 @@ public class WaitFreeQueue {
         helpFinishDeq();
         Node node = state.get(TID.get()).node;
         if (node == null) {
-            throw new IllegalStateException();
+            return null;
         }
         return node.next.get().value;
     }
