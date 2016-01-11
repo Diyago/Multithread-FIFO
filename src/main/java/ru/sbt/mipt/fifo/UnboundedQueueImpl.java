@@ -13,11 +13,13 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQueue<T> {
 
-    private Node<T> sentinel = new Node();
-    private AtomicReference<Node<T>> tail = new AtomicReference<Node<T>>(sentinel);
+    private AtomicReference<Node<T>> head;
+    private AtomicReference<Node<T>> tail;
 
     public UnboundedQueueImpl() {
-
+        Node<T> sentinel = new Node();
+        head = new AtomicReference<Node<T>>(sentinel);
+        tail = new AtomicReference<Node<T>>(sentinel);
     }
 
     private static class Node<T> {
@@ -49,7 +51,7 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
     @Override
     // return size of Queue (numbers of Nodes)
     public int size() {
-        Node<T> node = sentinel.next.get();
+        Node<T> node = head.get().next.get();
         int count = 0;
         while (node != null) {
             count++;
@@ -110,18 +112,19 @@ public class UnboundedQueueImpl<T> extends AbstractQueue<T> implements BlockingQ
     @Override
     public T poll() {
         while (true) {
-            final Node<T> first = sentinel.next.get();
+            final Node<T> localHead = head.get();
+            final Node<T> first = localHead.next.get();
             if (first == null)
                 return null;
 
-            if (sentinel.next.compareAndSet(first, first.next.get()))
+            if (head.compareAndSet(localHead, first))
                 return first.value;
         }
     }
 
     @Override
     public T peek() {
-        final Node<T> first = sentinel.next.get();
+        final Node<T> first = head.get().next.get();
         if (first == null)
             return null;
         return first.value;

@@ -13,10 +13,10 @@ import java.util.Queue;
 public class ThreadManager  {
 
     private List<MeasurementThread> threads;
-    public ThreadManager(int threadsNumber, MyThreadFactory factory, Queue<Integer> queue) {
+    public ThreadManager(int threadsNumber, MyThreadFactory threadFactory, Queue<Integer> queue) {
         threads = new ArrayList<>(threadsNumber);
         for (int i = 0 ; i < threadsNumber; i++) {
-            threads.add(factory.create(queue));
+            threads.add(threadFactory.create(queue));
         }
     }
 

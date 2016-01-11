@@ -24,6 +24,8 @@ public class ThroughputMeasurementThread extends MeasurementThread {
             count++;
             value = queue.poll();
         }
+
+        //сохранить результат вычисления
         resultSum = sum;
         resultCount = count;
     }

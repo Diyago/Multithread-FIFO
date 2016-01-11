@@ -3,35 +3,57 @@ package ru.sbt.mipt.fifo.performance;
 import ru.sbt.mipt.fifo.UnboundedQueueImpl;
 import ru.sbt.mipt.fifo.performance.threads.MyThreadFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadFactory;
 
 /**
  * Created by Ilya3_000 on 10.01.2016.
  */
 public class Main {
+    static final int N_ELEMENTS = 10_000_000;
+    static final int WARM_UP_ELEMENTS = 1_000_000;
 
     public static void main(String[] args) {
-        UnboundedQueueImpl<Integer> q = new UnboundedQueueImpl<>();
-        /*long t = System.nanoTime();
-        for (int i = 0 ; i < 10000000; i++) {
-            q.add(1);
+        //UnboundedQueueImpl<Integer> q = new UnboundedQueueImpl<>();
+        //doWarmUp(q);
+        //doTest(q);
+
+        ConcurrentLinkedQueue<Integer> c = new ConcurrentLinkedQueue<>();
+        doWarmUp(c);
+        doTest(c);
+    }
+
+    public static void doTest(Queue<Integer> queue) {
+        System.out.println("Start performance test for "+queue.getClass().getSimpleName());
+        List<Double> throughput = new ArrayList<>();
+        List<Double> latency = new ArrayList<>();
+        for (int i = 1; i <= 32; i *= 2) {
+            throughput.add(QueueHelper.doThroughputMeasurement(i,queue, N_ELEMENTS));
+            latency.add(QueueHelper.doLatencyMeasurement(i,queue,N_ELEMENTS));
         }
-        t = System.nanoTime() - t;
-        System.out.println("Adding Time: "+t/Math.pow(10,9)+ "Size: "+ q.size());*/
-
-        double t = QueueHelper.addElementsToQueue(30000000, q, 1);
-        System.out.println("Adding Time: "+t);
-
-        ThreadManager threadManager = new ThreadManager(8, MyThreadFactory.ThroughputMeasurementThreads, q);
-        double time = threadManager.getExecutionTime();
-        System.out.println("Execution time "+ time);
-
-        Long[][] result = threadManager.getResult();
-
-        for (int i = 0; i < result.length; i++) {
-            System.out.println("Thread-"+i+" gets "+result[i][0]+" elements and its sum is "+result[i][1]);
+        System.out.println("RESULT FOR "+queue.getClass().getSimpleName()+":");
+        for (int i = 0 ; i < latency.size() ; i++) {
+            System.out.println(Math.pow(2,i)+" threads: throughput = "+throughput.get(i)+", latency = "+latency.get(i));
         }
+        System.out.println("=================================");
+    }
 
+    public static void doWarmUp(Queue<Integer> queue) {
+        System.out.println("Start warm up for "+queue.getClass().getSimpleName());
+        List<Double> throughput = new ArrayList<>();
+        List<Double> latency = new ArrayList<>();
+        for (int i = 1; i <= 32; i *= 2) {
+            throughput.add(QueueHelper.doThroughputMeasurement(i,queue, WARM_UP_ELEMENTS));
+            latency.add(QueueHelper.doLatencyMeasurement(i,queue,WARM_UP_ELEMENTS));
+        }
+        System.out.println("WARM UP RESULT FOR "+queue.getClass().getSimpleName()+":");
+        for (int i = 0 ; i < latency.size() ; i++) {
+            System.out.println(Math.pow(2,i)+" threads: throughput = "+throughput.get(i)+", latency = "+latency.get(i));
+        }
+        System.out.println("=================================");
     }
 
 }

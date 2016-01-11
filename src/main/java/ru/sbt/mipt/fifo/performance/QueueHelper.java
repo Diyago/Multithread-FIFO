@@ -1,6 +1,10 @@
 package ru.sbt.mipt.fifo.performance;
 
+import ru.sbt.mipt.fifo.UnboundedQueueImpl;
+import ru.sbt.mipt.fifo.performance.threads.MyThreadFactory;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -12,52 +16,78 @@ import java.util.concurrent.Future;
  * Created by Ilya3_000 on 10.01.2016.
  */
 public class QueueHelper {
-    private static final int N = 5;
-    private static ExecutorService executor = Executors.newFixedThreadPool(N);
 
-    public static double addElementsToQueue(int numberOfElements, Queue<Integer> queue, int element) {
-        int part = numberOfElements / N;
-        int residual = numberOfElements % N;
+    public static double doLatencyMeasurement(int numberOfThreads, Queue<Integer> queue, int numberOfElements) {
+        double time = addElementsToQueueInSingleThread(numberOfElements, queue, 1);
+        System.out.println("Added "+numberOfElements+" elements to "+queue.getClass().getSimpleName()+" for "+time+" seconds");
 
-        List<Future> list = new ArrayList<>();
+        ThreadManager threadManager = new ThreadManager(numberOfThreads, MyThreadFactory.LatencyMeasurementThreads, queue);
+        System.out.println("Start latency performance test for "+numberOfThreads+" threads");
+        time = threadManager.getExecutionTime();
+        System.out.println("Polling time "+ time);
 
-        long time = System.nanoTime();
+        Long[][] result = threadManager.getResult();
+        List<Double> latency = new ArrayList<>(result.length);
 
-        list.add(executor.submit(new DoAdd(part+residual, queue, element)));
-        for (int i = 1; i < N; i++) {
-            list.add(executor.submit(new DoAdd(part, queue, element)));
+        for (int i = 0; i < result.length; i++) {
+            if (result[i][1] == 0)
+                continue;
+            time = result[i][0]/Math.pow(10,9);
+            latency.add(time/result[i][1]);
+            System.out.println("Thread-"+i+" executes poll "+result[i][1]+" times for "+time+" seconds. Calculated latency is "+time/result[i][1]);
         }
 
-        //wait for execution ends
-        list.forEach(t -> {
-            try {
-                t.get();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        double average = latency.stream().mapToDouble(a -> a).average().getAsDouble();
 
-        time = System.nanoTime() - time;
-        return time/Math.pow(10,9);
+        System.out.println("Calculated average latency("+numberOfElements+" elements and "+numberOfThreads+" threads) is "+average);
+        System.out.println("-------------------------------------------------------");
+        return average;
+    }
+
+    public static double doThroughputMeasurement(int numberOfThreads, Queue<Integer> queue, int numberOfElements) {
+        double time = addElementsToQueueInSingleThread(numberOfElements, queue, 1);
+        System.out.println("Added "+numberOfElements+" elements to "+queue.getClass().getSimpleName()+" for "+time+" seconds");
+
+        ThreadManager threadManager = new ThreadManager(numberOfThreads, MyThreadFactory.ThroughputMeasurementThreads, queue);
+        System.out.println("Start throughput performance test for "+numberOfThreads+" threads");
+        time = threadManager.getExecutionTime();
+        System.out.println("Polling time "+ time);
+
+        Long[][] result = threadManager.getResult();
+
+        for (int i = 0; i < result.length; i++) {
+            System.out.println("Thread-"+i+" gets "+result[i][0]+" elements and its sum is "+result[i][1]);
+        }
+
+        double throughput = numberOfElements/time;
+
+        System.out.println("Calculated throughput("+numberOfElements+" elements and "+numberOfThreads+" threads) is "+ throughput);
+        System.out.println("-------------------------------------------------------");
+        return  throughput;
+    }
+
+    /**
+     *
+     * @param numberOfElements
+     * @param queue
+     * @param element
+     * @return execution time (sec)
+     */
+    public static double addElementsToQueueInSingleThread(int numberOfElements, Queue<Integer> queue, int element) {
+        long t = System.nanoTime();
+        for (int i = 0 ; i < numberOfElements; i++) {
+            queue.add(element);
+        }
+        t = System.nanoTime() - t;
+        return t/Math.pow(10, 9);
 
     }
 
-    private static class DoAdd implements Runnable {
-        int numberOfElements;
-        Queue<Integer> queue;
-        int element;
+    public static void main(String[] args) {
+        UnboundedQueueImpl<Integer> q = new UnboundedQueueImpl();
+        q.add(10);
+        System.out.println(q.poll());
 
-        public DoAdd(int numberOfElements, Queue<Integer> queue, int element) {
-            this.numberOfElements = numberOfElements;
-            this.queue = queue;
-            this.element = element;
-        }
-
-        @Override
-        public void run() {
-            for (int i = 0 ; i< numberOfElements; i++) {
-                queue.add(element);
-            }
-        }
     }
+
 }
